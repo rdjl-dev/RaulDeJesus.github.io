@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside id="contacts" class="contacts" aria-label="Contactos">
+    <div class="contacts-title">CONTACTS</div>
+    <div class="contacts-inner" tabindex="0">
+      <div class="contacts-section">
+        <div class="contacts-item"><span class="c-label">Phone</span><a href="tel:675927013" class="c-value">675 92 70 13</a></div>
+        <div class="contacts-item"><span class="c-label">Email</span><a href="mailto:raudejesusla@gmail.com" class="c-value">raudejesusla@gmail.com</a></div>
+        <div class="contacts-item"><span class="c-label">GitHub</span><a id="githubLink" class="c-value" href="https://github.com/rdjl-dev" target="_blank" rel="noopener">github.com/rdjl-dev</a></div>
+        <div class="contacts-item"><span class="c-label">Linkedin</span><a id="githubLink" class="c-value" href="https://www.linkedin.com/in/ra%C3%BAl-de-jes%C3%BAs-larios/" target="_blank" rel="noopener">www.linkedin.com/in/raúl-de-jesús-larios</a></div>
+      </div>
+      <div class="contacts-section">
+        <div class="contacts-item"><span class="c-label">Location</span><span class="c-value">Madrid,Spain</span></div>
+        <div class="contacts-item"><span class="c-label">Languages</span><span class="c-value">ES / EN / CAT</span></div>
+      </div>
+      <div class="contacts-section">
+        <div class="contacts-item"><span class="c-label">Availability</span><span class="c-value">Open to work</span></div>
+      </div>
+    </div>
+    <div class="fake-scroll" aria-hidden="true"><div class="thumb"></div></div>
+  </aside>
+
+  <div class="content">
+    <div class="window-header" aria-hidden="true">
+      <span class="win-dot"></span>
+      <span class="win-dot"></span>
+      <span class="win-dot"></span>
+    </div>
+
+    <div class="search-box-horizontal">
+      <div class="search-box-inner">
+        <div class="search-title">SEARCH</div>
+        <div class="search-wrap">
+          <input id="searchInput" class="search-input" placeholder="Search the portfolio (fictitious)" aria-label="Buscar">
+          <button id="searchBtn" class="search-btn" aria-label="Buscar">Search</button>
+          <div id="suggestions" class="suggestions" role="listbox" aria-label="Sugerencias" hidden></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="viewer" class="viewer"></div>
+  </div>
+
+  <aside id="sidebar" class="sidebar" aria-label="Right sidebar menu">
+    <div class="menu" tabindex="0" role="menu" aria-orientation="vertical">
+      <button class="menu-item" role="menuitem" data-key="home" title="Home">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5L12 4l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5z" fill="currentColor"/></svg>
+        <span class="label">Home</span>
+      </button>
+      <button class="menu-item" role="menuitem" data-key="about" title="About">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4 0-7 2-7 4v1h14v-1c0-2-3-4-7-4z" fill="currentColor"/></svg>
+        <span class="label">About</span>
+      </button>
+      <button class="menu-item" role="menuitem" data-key="projects" title="Projects">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7v10a2 2 0 0 0 2 2h14V7H3zm16 10H5V9h14v8zM7 3h10v2H7V3z" fill="currentColor"/></svg>
+        <span class="label">Projects</span>
+      </button>
+      <button class="menu-item" role="menuitem" data-key="games" title="Games">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v1H7a4 4 0 0 0-4 4v3h18V10a4 4 0 0 0-4-4h-2V5a3 3 0 0 0-3-3zM8 13H6v-2h2v2zm10 0h-2v-2h2v2z" fill="currentColor"/></svg>
+        <span class="label">Games</span>
+      </button>
+      <button class="menu-item" role="menuitem" data-key="github" title="GitHub">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.2.8-.5v-2c-3.3.7-4-1.6-4-1.6-.5-1.3-1.2-1.6-1.2-1.6-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 .1.6-.9.6-.9-.8-1.6-2-1.2-2-1.2-1.6 1-1.3 2.8-1.3 2.8.6 1 1.9.7 1.9.7.9-.1 1.7-.8 2.1-1.4-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.4.1-3 0 0 1-.3 3.4 1.2a11.6 11.6 0 0 1 6.2 0C19 4.6 20 4.9 20 4.9c.6 1.6.2 2.7.1 3 .7.8 1.2 1.9 1.2 3.2 0 4.5-2.7 5.4-5.3 5.8.6.5 1 1.3 1 2.6v3.8c0 .3.2.6.8.5A12 12 0 0 0 12 .5z" fill="currentColor"/></svg>
+        <span class="label">GitHub</span>
+      </button>
+      <button class="menu-item" role="menuitem" data-key="contact" title="Contact">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6v12a2 2 0 0 0 2 2h16V6H2zm9 7H7v-2h4v2zm3-4H7V7h7v2z" fill="currentColor"/></svg>
+        <span class="label">CV</span>
+      </button>
+    </div>
+  </aside>
+
+  <script src="Script.js" defer></script>
+</body>
+</html>
