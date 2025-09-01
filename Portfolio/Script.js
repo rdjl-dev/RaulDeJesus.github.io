@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchBtn = document.getElementById('searchBtn');
   const suggestionsEl = document.getElementById('suggestions');
   const githubLink = document.getElementById('githubLink');
-  const cvMenuItem = menu.querySelector('[data-key="contact"]');
+   const cvMenuItem = menu.querySelector('[data-key="contact"]');
 
   const sections = {
     home: '<div class="presentation fade-in"><h1>Hola, soy Raúl De Jesús Larios</h1><p>Desarrollador de videojuegos especializado en planificación y programación de plataformas interactivas. Me interesa especialmente crear experiencias multiplataforma con ideas claras y jugables.</p></div>',
