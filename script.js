@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       id: 'pirate-adventure',
       title: 'Pirate Adventure — Mobile (Kids)',
-      desc: 'Mobile game for children developed as part of the company internship during the Video Game Specialization course. Built with Unity.',
+      desc: 'Mobile and windows game for children developed as part of the company internship during the Video Game Specialization course. Built with Unity.',
       driveId: '1vlysJOJsT7knRT72JhtEZQb-Qx5Dh8Nl'
     },
     {
