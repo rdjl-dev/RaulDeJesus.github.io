@@ -17,8 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const sections = {
     home: '<div class="presentation fade-in"><h1>Hi, I’m Raúl De Jesús Larios</h1><p>Turning ideas into apps and games is what I do best.<br>I enjoy building interactive experiences that are both fun and functional.<br>Always curious, always coding, always debugging.</p><p>Take a look at my work and see what I’ve been creating.</p></div>',
-    about: '<div class="section fade-in"><h2>About</h2><p>I’m a passionate developer who loves creating applications and games that are engaging, functional, and fun. I enjoy turning ideas into interactive experiences and tackling every challenge along the way—bugs included.</p></div>'
-  };
+    about:  '<div class="section fade-in"><h2>About</h2><p>Hello, I’m <b>Raúl De Jesús Larios</b> — a <b>developer</b> with a strong interest in creating both <b>interactive applications</b> and <b>video games</b>. I enjoy designing experiences that are <b>engaging</b>, <b>functional</b>, and <b>polished</b>, whether it involves building mechanics in <b>Unity</b>, developing mobile apps in <b>Android Studio</b>, or prototyping new ideas. My approach combines <b>technical problem-solving</b>, <b>structured design</b>, and <b>continuous iteration</b>. Each project — from small prototypes to long-term developments — represents both a <b>creative challenge</b> and an opportunity to grow. Feel free to explore my work; every project reflects <b>dedication</b>, <b>continuous learning</b>, and a genuine passion for <b>software development</b> as a whole.</p></div>'};
 
   let currentProjectUrl = null;
 
@@ -139,17 +138,36 @@ document.addEventListener('DOMContentLoaded', () => {
   searchBtn.addEventListener('click', () => { handleSearchQuery(searchInput.value); suggestionsEl.hidden = true; });
   searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleSearchQuery(searchInput.value); suggestionsEl.hidden = true; } });
 
+  // --- PROJECTS: only the three real projects requested ---
   const projectItems = [
-    { id: 'p1', title: 'Super Jump — Mini Game (Unity prototype)', url: 'https://example.com/super-jump', desc: 'Prototipo de mecánica de plataformas con físicas mejoradas y power-ups.', youtube: 'M7lc1UVf-VE' },
-    { id: 'p2', title: 'PhotoShare App (Flutter)', url: 'https://example.com/photoshare', desc: 'Aplicación móvil para compartir fotos, con pipeline de subida optimizada.', youtube: 'dQw4w9WgXcQ' },
-    { id: 'p3', title: 'Portfolio Website (Vanilla JS)', url: 'https://example.com/portfolio', desc: 'Mi portafolio personal con animaciones y búsqueda ficticia integradas.', youtube: 'M7lc1UVf-VE' }
+    {
+      id: 'vermillion',
+      title: 'Vermillion — Video Game',
+      desc: 'Video game developed over 4 months during the Video Game Specialization course. Built with Unity.',
+      driveId: '1GQxggXMPnpqyn72ISw6T97XRAlzQ-ONx'
+    },
+    {
+      id: 'pirate-adventure',
+      title: 'Pirate Adventure — Mobile (Kids)',
+      desc: 'Mobile game for children developed as part of the company internship during the Video Game Specialization course. Built with Unity.',
+      driveId: '1vlysJOJsT7knRT72JhtEZQb-Qx5Dh8Nl'
+    },
+    {
+      id: 'dam-final',
+      title: 'DAM Final Project — Android Game',
+      desc: 'Final project for DAM. Android game built with LibGDX using Android Studio.',
+      driveId: '1WKNbT_eJgipuckpck0j77OfSrcFWr-kg'
+    }
   ];
 
   function renderProjectSearch(){
-    let html = '<div class="result-list fade-in" role="region" aria-label="Resultados de proyectos">';
-    html += '<div style="margin-bottom:12px;font-weight:800">Proyectos — resultados</div>';
+    let html = '<div class="result-list fade-in" role="region" aria-label="Project results">';
+    html += '<div style="margin-bottom:12px;font-weight:800">Projects — results</div>';
     projectItems.forEach(p => {
-      html += '<div class="result-item" data-id="'+p.id+'"><button type="button" class="result-title" data-id="'+p.id+'" aria-label="'+escapeHtml(p.title)+'">'+escapeHtml(p.title)+'</button><button type="button" class="result-url" data-id="'+p.id+'" aria-label="Abrir '+escapeHtml(p.url)+'">'+escapeHtml(p.url)+'</button><div class="result-desc">'+escapeHtml(p.desc)+'</div></div>';
+      html += '<div class="result-item" data-id="'+p.id+'">'
+           + '<button type="button" class="result-title" data-id="'+p.id+'" aria-label="'+escapeHtml(p.title)+'">'+escapeHtml(p.title)+'</button>'
+           + '<div class="result-desc">'+escapeHtml(p.desc)+'</div>'
+           + '</div>';
     });
     html += '</div>';
     setContent(html);
@@ -160,13 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const titleBtn = e.target.closest('.result-title');
     if (titleBtn) {
       const id = titleBtn.dataset.id;
-      const project = projectItems.find(p => p.id === id);
-      if (project) openProjectPreview(project);
-      return;
-    }
-    const urlBtn = e.target.closest('.result-url');
-    if (urlBtn) {
-      const id = urlBtn.dataset.id;
       const project = projectItems.find(p => p.id === id);
       if (project) openProjectPreview(project);
       return;
@@ -188,19 +199,45 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key !== 'Enter') return;
     const focusEl = document.activeElement;
     if (!viewer.contains(focusEl)) return;
-    if (focusEl.classList.contains('result-title') || focusEl.classList.contains('result-url')) {
+    if (focusEl.classList.contains('result-title')) {
       focusEl.click();
     }
     if (focusEl.id === 'backToResults') renderProjectSearch();
   });
 
-  function openProjectPreview(project){
-    searchInput.value = project.url;
-    currentProjectUrl = project.url;
-    const html = '<div class="section fade-in"><div style="display:flex;gap:18px;flex-direction:column;"><div style="display:flex;align-items:center;justify-content:space-between;"><h2 style="margin:0;">'+escapeHtml(project.title)+'</h2><button id="backToResults" class="cv-button" aria-label="Volver a resultados">← Volver</button></div><div style="margin-top:12px;"><div style="position:relative;padding-top:56.25%;border-radius:8px;overflow:hidden;border:1px solid rgba(0,0,0,0.06);"><iframe src="https://www.youtube.com/embed/'+encodeURIComponent(project.youtube)+'" title="'+escapeHtml(project.title)+'" style="position:absolute;inset:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><p style="margin-top:12px;color:rgba(0,0,0,0.72)">'+escapeHtml(project.desc)+'</p><p style="font-size:13px;color:rgba(0,0,0,0.55)">URL (ficticia): <span style="color:var(--accent);font-weight:800">'+escapeHtml(project.url)+'</span></p></div></div></div>';
-    setContent(html);
-    setTimeout(() => { const back = document.getElementById('backToResults'); if (back) back.focus(); }, 80);
+function openProjectPreview(project){
+  searchInput.value = '';
+  currentProjectUrl = null;
+
+  let iframeSrc = '';
+  let iframeAllow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+  if (project.youtube) {
+    iframeSrc = 'https://www.youtube.com/embed/' + encodeURIComponent(project.youtube);
+  } else if (project.driveId) {
+    iframeSrc = 'https://drive.google.com/file/d/' + encodeURIComponent(project.driveId) + '/preview';
+    iframeAllow += '; autoplay';
+  } else if (project.url) {
+    iframeSrc = project.url;
   }
+
+  const iframeHtml = '<div class="project-video" role="region" aria-label="' + escapeHtml(project.title) + ' video preview">'
+    + '<iframe src="' + escapeHtml(iframeSrc) + '" title="' + escapeHtml(project.title) + '" allow="' + escapeHtml(iframeAllow) + '" allowfullscreen loading="lazy"></iframe>'
+    + '</div>';
+
+  const html = '<div class="section fade-in"><div style="display:flex;gap:18px;flex-direction:column;">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;">'
+    + '<h2 style="margin:0;">' + escapeHtml(project.title) + '</h2>'
+    + '<button id="backToResults" class="cv-button" aria-label="Back to results">← Back</button>'
+    + '</div>'
+    + '<div style="margin-top:12px;">'
+    + iframeHtml
+    + '<p style="margin-top:12px;color:rgba(0,0,0,0.72)">' + escapeHtml(project.desc) + '</p>'
+    + '</div></div></div>';
+
+  setContent(html);
+  setTimeout(() => { const back = document.getElementById('backToResults'); if (back) back.focus(); }, 80);
+}
+
 
   function clearProjectUrlIfNeeded(){
     if (!currentProjectUrl) return;
@@ -252,4 +289,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeContactsMobile(); closeSidebarMobile(); } });
+
+  let contactsDropdown = null;
+  function setContactsCollapsedMode(active){
+    if (active){
+      contacts.style.display = 'none';
+      if (!contactsDropdown){
+        contactsDropdown = document.createElement('div');
+        contactsDropdown.id = 'contactsDropdown';
+        contactsDropdown.className = 'contacts-dropdown';
+        const inner = contacts.querySelector('.contacts-inner');
+        contactsDropdown.innerHTML = '<div class="contacts-dropdown-body" tabindex="0">'+ (inner ? inner.innerHTML : '') + '</div><button id="contactsDropdownClose" class="contacts-close-btn" aria-label="Cerrar contactos">✕</button>';
+        const header = document.querySelector('.window-header');
+        header.appendChild(contactsDropdown);
+        const closeBtn = contactsDropdown.querySelector('#contactsDropdownClose');
+        closeBtn.addEventListener('click', () => {
+          contactsDropdown.classList.remove('open');
+          if (contactsToggle) contactsToggle.setAttribute('aria-expanded','false');
+        });
+        contactsDropdown.addEventListener('click', (e) => {
+          if (e.target === contactsDropdown) {
+            contactsDropdown.classList.remove('open');
+            if (contactsToggle) contactsToggle.setAttribute('aria-expanded','false');
+          }
+        });
+      }
+    } else {
+      contacts.style.display = '';
+      if (contactsDropdown){
+        contactsDropdown.remove();
+        contactsDropdown = null;
+        if (contactsToggle) contactsToggle.setAttribute('aria-expanded','false');
+      }
+    }
+  }
+  function toggleContactsDropdown(){
+    if (!contactsDropdown) return;
+    contactsDropdown.classList.toggle('open');
+    const expanded = contactsDropdown.classList.contains('open');
+    if (contactsToggle) contactsToggle.setAttribute('aria-expanded', String(expanded));
+  }
+  if (contactsToggle){
+    contactsToggle.addEventListener('click', (e) => {
+      const collapsed = window.innerWidth < 1400;
+      if (!collapsed){
+        if (contacts) contacts.scrollIntoView({behavior:'smooth', block:'center'});
+        return;
+      }
+      toggleContactsDropdown();
+    });
+  }
+  function handleContactsCollapseOnResize(){
+    const shouldCollapse = window.innerWidth < 1400;
+    setContactsCollapsedMode(shouldCollapse);
+  }
+  window.addEventListener('resize', handleContactsCollapseOnResize);
+  handleContactsCollapseOnResize();
+
 });
