@@ -158,7 +158,9 @@ html, body { height: 100%; }
 .suggestion:hover { background: rgba(192,57,43,0.08); }
 
 /* ─── VIEWER ─── */
-.viewer { width: 100%; height: calc(76vh - 120px); display: flex; align-items: center; justify-content: center; padding: 18px; z-index: 200; }
+.viewer { width: 100%; height: calc(76vh - 120px); display: flex; align-items: center; justify-content: center; padding: 18px; z-index: 200; overflow-y: auto; }
+.viewer:has(.result-list) { align-items: flex-start; }
+.viewer .result-list { width: 100%; }
 
 /* ─── PRESENTATION / SECTIONS ─── */
 .presentation {
