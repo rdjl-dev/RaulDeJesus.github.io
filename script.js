@@ -321,9 +321,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ql==='github')                             { menu.querySelector('[data-key="github"]')?.click(); return; }
     if (['cv','contact','contacto'].includes(ql)) { menu.querySelector('[data-key="contact"]')?.click(); return; }
 
-    // external search via DuckDuckGo
+    // DuckDuckGo embedded search (shown inside the content viewer)
+    currentView = 'search';
     suggestionsEl.hidden = true;
-    openExternalSearch(q);
+    const ddgUrl = 'https://duckduckgo.com/?q=' + encodeURIComponent(q) + '&ia=web&kae=d&k1=-1&kp=-2';
+    setContent(`<div class="result-list fade-in">
+      <div class="results-header">${escapeHtml(t('search_results_h2'))} "<b>${escapeHtml(q)}</b>"</div>
+      <iframe
+        src="${escapeHtml(ddgUrl)}"
+        title="Search results"
+        style="width:100%;height:600px;border:none;border-radius:8px;margin-top:8px;"
+        loading="lazy"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+      ></iframe>
+    </div>`);
     clearProjectUrlIfNeeded();
   }
 
