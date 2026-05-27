@@ -1,6 +1,16 @@
-// ─── Google Custom Search config ────────────────────────
-const GOOGLE_API_KEY = 'AIzaSyAr0cfk_G4DbaaTUSaxQ3ljIM_r5LJxKPs';
-const GOOGLE_CX      = '87b3e2ad7b4be4dab';
+// ─── Favicon fallback (prevents 404 if favicon.ico missing) ─
+(function(){
+  if (!document.querySelector('link[rel~="icon"]')){
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.type = 'image/svg+xml';
+    link.href = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💻</text></svg>";
+    document.head.appendChild(link);
+  }
+})();
+
+// ─── Search config ───────────────────────────────────────
+// Uses DuckDuckGo (no API key required, works on GitHub Pages)
 
 // ─── i18n ────────────────────────────────────────────────
 const i18n = {
@@ -96,18 +106,11 @@ function applyI18n(){
   });
 }
 
-// ─── Google Search ───────────────────────────────────────
-async function googleSearch(query, startIndex = 1){
-  const url = new URL('https://www.googleapis.com/customsearch/v1');
-  url.searchParams.set('key', GOOGLE_API_KEY);
-  url.searchParams.set('cx',  GOOGLE_CX);
-  url.searchParams.set('q',   query);
-  url.searchParams.set('start', startIndex);
-  url.searchParams.set('num', 10);
-
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+// ─── External Search ──────────────────────────────────────
+// Opens DuckDuckGo in a new tab (no API key required)
+function openExternalSearch(query){
+  const url = 'https://duckduckgo.com/?q=' + encodeURIComponent(query);
+  window.open(url, '_blank', 'noopener');
 }
 
 function renderSearchResults(data, query, startIndex){
@@ -318,42 +321,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ql==='github')                             { menu.querySelector('[data-key="github"]')?.click(); return; }
     if (['cv','contact','contacto'].includes(ql)) { menu.querySelector('[data-key="contact"]')?.click(); return; }
 
-    // real Google search
-    currentView = 'search';
-    setContent(`<div class="section fade-in" style="text-align:center;padding-top:40px;">
-      <div class="search-spinner"></div>
-      <p style="margin-top:16px;font-family:var(--font-display);font-weight:700;letter-spacing:1px;color:var(--accent);">${escapeHtml(t('search_loading'))}</p>
-    </div>`);
+    // external search via DuckDuckGo
     suggestionsEl.hidden = true;
-
-    try {
-      const data = await googleSearch(q, 1);
-      setContent(renderSearchResults(data, q, 1));
-    } catch(err){
-      console.error(err);
-      setContent(`<div class="section fade-in"><h2 style="color:var(--accent);">!</h2><p>${escapeHtml(t('search_error'))}</p></div>`);
-    }
+    openExternalSearch(q);
     clearProjectUrlIfNeeded();
   }
 
   // pagination clicks delegated on viewer
   viewer.addEventListener('click', async e => {
-    const pageBtn = e.target.closest('.results-page-btn');
-    if (pageBtn){
-      const q     = pageBtn.dataset.query;
-      const start = parseInt(pageBtn.dataset.start, 10);
-      setContent(`<div class="section fade-in" style="text-align:center;padding-top:40px;">
-        <div class="search-spinner"></div>
-        <p style="margin-top:16px;font-family:var(--font-display);font-weight:700;letter-spacing:1px;color:var(--accent);">${escapeHtml(t('search_loading'))}</p>
-      </div>`);
-      try {
-        const data = await googleSearch(q, start);
-        setContent(renderSearchResults(data, q, start));
-      } catch(err){
-        setContent(`<div class="section fade-in"><p>${escapeHtml(t('search_error'))}</p></div>`);
-      }
-      return;
-    }
+    // pagination (no longer used with external search — kept as no-op for safety)
 
     // project list click
     const titleBtn = e.target.closest('.result-title[data-id]');
