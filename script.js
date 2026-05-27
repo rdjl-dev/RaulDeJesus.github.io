@@ -1,29 +1,6 @@
-// ─── Favicon fallback (prevents 404 if favicon.ico missing) ─
-(function(){
-  if (!document.querySelector('link[rel~="icon"]')){
-    const link = document.createElement('link');
-    link.rel = 'icon';
-    link.type = 'image/svg+xml';
-    link.href = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💻</text></svg>";
-    document.head.appendChild(link);
-  }
-})();
-
-// ─── Google CSE config ───────────────────────────────────
-// Widget oficial — reemplaza con tu cx real de programmablesearchengine.google.com
-const GOOGLE_CSE_CX = '87b3e2ad7b4be4dab';
-
-// Inyecta el script del widget de Google CSE una sola vez
-(function(){
-  if (!window.__gcseLoaded){
-    window.__gcseLoaded = true;
-    window.__gcse = { parsetags: 'explicit' };
-    const s = document.createElement('script');
-    s.src = 'https://cse.google.com/cse.js?cx=' + GOOGLE_CSE_CX;
-    s.async = true;
-    document.head.appendChild(s);
-  }
-})();
+// ─── Google Custom Search config ────────────────────────
+const GOOGLE_API_KEY = 'AIzaSyAr0cfk_G4DbaaTUSaxQ3ljIM_r5LJxKPs';
+const GOOGLE_CX      = '87b3e2ad7b4be4dab';
 
 // ─── i18n ────────────────────────────────────────────────
 const i18n = {
@@ -119,11 +96,18 @@ function applyI18n(){
   });
 }
 
-// ─── External Search ──────────────────────────────────────
-// Opens DuckDuckGo in a new tab (no API key required)
-function openExternalSearch(query){
-  const url = 'https://duckduckgo.com/?q=' + encodeURIComponent(query);
-  window.open(url, '_blank', 'noopener');
+// ─── Google Search ───────────────────────────────────────
+async function googleSearch(query, startIndex = 1){
+  const url = new URL('https://www.googleapis.com/customsearch/v1');
+  url.searchParams.set('key', GOOGLE_API_KEY);
+  url.searchParams.set('cx',  GOOGLE_CX);
+  url.searchParams.set('q',   query);
+  url.searchParams.set('start', startIndex);
+  url.searchParams.set('num', 10);
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
 }
 
 function renderSearchResults(data, query, startIndex){
@@ -334,52 +318,42 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ql==='github')                             { menu.querySelector('[data-key="github"]')?.click(); return; }
     if (['cv','contact','contacto'].includes(ql)) { menu.querySelector('[data-key="contact"]')?.click(); return; }
 
-    // Google CSE widget — renderiza resultados dentro del viewer
+    // real Google search
     currentView = 'search';
+    setContent(`<div class="section fade-in" style="text-align:center;padding-top:40px;">
+      <div class="search-spinner"></div>
+      <p style="margin-top:16px;font-family:var(--font-display);font-weight:700;letter-spacing:1px;color:var(--accent);">${escapeHtml(t('search_loading'))}</p>
+    </div>`);
     suggestionsEl.hidden = true;
 
-    // Contenedor con el div que el widget de Google necesita
-    setContent(`<div class="result-list fade-in" id="cseContainer">
-      <div class="results-header">${escapeHtml(t('search_results_h2'))} "<b>${escapeHtml(q)}</b>"</div>
-      <div id="cseResultsBox" style="margin-top:8px;"></div>
-    </div>`);
-
-    // Espera a que el DOM esté listo y lanza la búsqueda con el widget
-    function launchCSE(){
-      const box = document.getElementById('cseResultsBox');
-      if (!box) return;
-      box.innerHTML = '';
-
-      // Crea el elemento que el widget de Google necesita
-      const el = document.createElement('div');
-      el.className = 'gcse-searchresults-only';
-      el.setAttribute('data-queryParameterName', 'q');
-      el.setAttribute('data-defaultToImageSearch', 'false');
-      el.setAttribute('data-noResultsString', escapeHtml(t('search_no_results') + ' "' + q + '"'));
-      box.appendChild(el);
-
-      // Si el script ya cargó, renderiza directamente; si no, espera
-      if (window.google && window.google.search && window.google.search.cse && window.google.search.cse.element) {
-        window.google.search.cse.element.render({ div: el, tag: 'searchresults-only', gname: 'gsearch' });
-        window.google.search.cse.element.getElement('gsearch')?.execute(q);
-      } else {
-        // Callback que Google llama cuando termina de cargar
-        window.__gcseReadyCallback = function(){
-          window.google.search.cse.element.render({ div: el, tag: 'searchresults-only', gname: 'gsearch' });
-          window.google.search.cse.element.getElement('gsearch')?.execute(q);
-        };
-        window.__gcse.callback = window.__gcseReadyCallback;
-      }
+    try {
+      const data = await googleSearch(q, 1);
+      setContent(renderSearchResults(data, q, 1));
+    } catch(err){
+      console.error(err);
+      setContent(`<div class="section fade-in"><h2 style="color:var(--accent);">!</h2><p>${escapeHtml(t('search_error'))}</p></div>`);
     }
-
-    // Pequeño delay para que setContent termine de insertar el DOM
-    setTimeout(launchCSE, 50);
     clearProjectUrlIfNeeded();
   }
 
   // pagination clicks delegated on viewer
   viewer.addEventListener('click', async e => {
-    // pagination (no longer used with external search — kept as no-op for safety)
+    const pageBtn = e.target.closest('.results-page-btn');
+    if (pageBtn){
+      const q     = pageBtn.dataset.query;
+      const start = parseInt(pageBtn.dataset.start, 10);
+      setContent(`<div class="section fade-in" style="text-align:center;padding-top:40px;">
+        <div class="search-spinner"></div>
+        <p style="margin-top:16px;font-family:var(--font-display);font-weight:700;letter-spacing:1px;color:var(--accent);">${escapeHtml(t('search_loading'))}</p>
+      </div>`);
+      try {
+        const data = await googleSearch(q, start);
+        setContent(renderSearchResults(data, q, start));
+      } catch(err){
+        setContent(`<div class="section fade-in"><p>${escapeHtml(t('search_error'))}</p></div>`);
+      }
+      return;
+    }
 
     // project list click
     const titleBtn = e.target.closest('.result-title[data-id]');
