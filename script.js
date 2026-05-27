@@ -9,8 +9,21 @@
   }
 })();
 
-// ─── Search config ───────────────────────────────────────
-// Uses DuckDuckGo (no API key required, works on GitHub Pages)
+// ─── Google CSE config ───────────────────────────────────
+// Widget oficial — reemplaza con tu cx real de programmablesearchengine.google.com
+const GOOGLE_CSE_CX = '87b3e2ad7b4be4dab';
+
+// Inyecta el script del widget de Google CSE una sola vez
+(function(){
+  if (!window.__gcseLoaded){
+    window.__gcseLoaded = true;
+    window.__gcse = { parsetags: 'explicit' };
+    const s = document.createElement('script');
+    s.src = 'https://cse.google.com/cse.js?cx=' + GOOGLE_CSE_CX;
+    s.async = true;
+    document.head.appendChild(s);
+  }
+})();
 
 // ─── i18n ────────────────────────────────────────────────
 const i18n = {
@@ -321,20 +334,46 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ql==='github')                             { menu.querySelector('[data-key="github"]')?.click(); return; }
     if (['cv','contact','contacto'].includes(ql)) { menu.querySelector('[data-key="contact"]')?.click(); return; }
 
-    // DuckDuckGo embedded search (shown inside the content viewer)
+    // Google CSE widget — renderiza resultados dentro del viewer
     currentView = 'search';
     suggestionsEl.hidden = true;
-    const ddgUrl = 'https://duckduckgo.com/?q=' + encodeURIComponent(q) + '&ia=web&kae=d&k1=-1&kp=-2';
-    setContent(`<div class="result-list fade-in">
+
+    // Contenedor con el div que el widget de Google necesita
+    setContent(`<div class="result-list fade-in" id="cseContainer">
       <div class="results-header">${escapeHtml(t('search_results_h2'))} "<b>${escapeHtml(q)}</b>"</div>
-      <iframe
-        src="${escapeHtml(ddgUrl)}"
-        title="Search results"
-        style="width:100%;height:600px;border:none;border-radius:8px;margin-top:8px;"
-        loading="lazy"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-      ></iframe>
+      <div id="cseResultsBox" style="margin-top:8px;"></div>
     </div>`);
+
+    // Espera a que el DOM esté listo y lanza la búsqueda con el widget
+    function launchCSE(){
+      const box = document.getElementById('cseResultsBox');
+      if (!box) return;
+      box.innerHTML = '';
+
+      // Crea el elemento que el widget de Google necesita
+      const el = document.createElement('div');
+      el.className = 'gcse-searchresults-only';
+      el.setAttribute('data-queryParameterName', 'q');
+      el.setAttribute('data-defaultToImageSearch', 'false');
+      el.setAttribute('data-noResultsString', escapeHtml(t('search_no_results') + ' "' + q + '"'));
+      box.appendChild(el);
+
+      // Si el script ya cargó, renderiza directamente; si no, espera
+      if (window.google && window.google.search && window.google.search.cse && window.google.search.cse.element) {
+        window.google.search.cse.element.render({ div: el, tag: 'searchresults-only', gname: 'gsearch' });
+        window.google.search.cse.element.getElement('gsearch')?.execute(q);
+      } else {
+        // Callback que Google llama cuando termina de cargar
+        window.__gcseReadyCallback = function(){
+          window.google.search.cse.element.render({ div: el, tag: 'searchresults-only', gname: 'gsearch' });
+          window.google.search.cse.element.getElement('gsearch')?.execute(q);
+        };
+        window.__gcse.callback = window.__gcseReadyCallback;
+      }
+    }
+
+    // Pequeño delay para que setContent termine de insertar el DOM
+    setTimeout(launchCSE, 50);
     clearProjectUrlIfNeeded();
   }
 

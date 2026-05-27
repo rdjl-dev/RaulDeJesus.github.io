@@ -518,3 +518,108 @@ html, body { height: 100%; }
   margin: 0 auto;
   animation: spin .7s linear infinite;
 }
+
+/* ─── GOOGLE CSE WIDGET OVERRIDES ─────────────────────────
+   Fuerza que el widget encaje con el diseño sin romper el layout
+──────────────────────────────────────────────────────────── */
+
+/* Contenedor raíz del widget */
+.gsc-control-cse,
+.gsc-control-cse * {
+  font-family: var(--font-body) !important;
+  background: transparent !important;
+  border-color: var(--border-dark) !important;
+}
+
+/* Quita el fondo blanco que Google inyecta */
+.gsc-results-wrapper-overlay,
+.gsc-results-wrapper-nooverlay,
+.gsc-above-wrapper-area,
+.gsc-tabsArea,
+.gs-result,
+.gsc-result,
+.gsc-webResult {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Cada resultado */
+.gsc-result {
+  border-bottom: 2px solid var(--border-dark) !important;
+  padding: 14px 0 !important;
+  margin: 0 !important;
+}
+
+/* Título del resultado */
+.gs-title, .gs-title * {
+  font-family: var(--font-display) !important;
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  color: var(--accent) !important;
+  text-decoration: none !important;
+}
+.gs-title:hover, .gs-title *:hover {
+  color: var(--accent-dark) !important;
+  text-decoration: underline !important;
+}
+
+/* URL visible */
+.gsc-url-top, .gs-visibleUrl, .gs-visibleUrl-long {
+  color: #666 !important;
+  font-size: 0.78rem !important;
+}
+
+/* Snippet / descripción */
+.gs-snippet {
+  color: var(--muted-text) !important;
+  font-size: 0.88rem !important;
+  line-height: 1.5 !important;
+}
+
+/* Thumbnail */
+.gsc-thumbnail-inside, .gsc-table-result {
+  background: transparent !important;
+}
+
+/* Paginación */
+.gsc-cursor-box {
+  text-align: center !important;
+  margin-top: 16px !important;
+}
+.gsc-cursor-page {
+  font-family: var(--font-display) !important;
+  font-weight: 700 !important;
+  color: var(--muted-text) !important;
+  background: var(--panel-bg2) !important;
+  border: 2px solid var(--border-dark) !important;
+  padding: 4px 10px !important;
+  margin: 0 2px !important;
+  cursor: pointer !important;
+}
+.gsc-cursor-current-page {
+  background: var(--accent) !important;
+  color: var(--light-text) !important;
+  border-color: var(--accent-dark) !important;
+}
+
+/* Barra de búsqueda interna del widget — ocúltala (ya tienes la tuya) */
+.gsc-search-box,
+.gsc-search-box-tools,
+.gsc-above-wrapper-area {
+  display: none !important;
+}
+
+/* Oculta el logo "Google" y los créditos */
+.gcsc-find-more-on-google,
+.gcsc-find-more-on-google-root,
+.gsc-results .gsc-cursor-box .gsc-trailing-more-results {
+  display: none !important;
+}
+
+/* Sin overflow ni scroll interno — crece con el contenido */
+#cseResultsBox,
+.gsc-control-cse {
+  width: 100% !important;
+  overflow: visible !important;
+}
