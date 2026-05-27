@@ -1,6 +1,5 @@
-// ─── Google Custom Search config ────────────────────────
-const GOOGLE_API_KEY = 'AIzaSyAr0cfk_G4DbaaTUSaxQ3ljIM_r5LJxKPs';
-const GOOGLE_CX      = '87b3e2ad7b4be4dab';
+// ─── Serper Search config ────────────────────────────────
+const SERPER_API_KEY = '8795cabd2af405a1384a2b1edc782705bdcfa899';
 
 // ─── i18n ────────────────────────────────────────────────
 const i18n = {
@@ -96,18 +95,36 @@ function applyI18n(){
   });
 }
 
-// ─── Google Search ───────────────────────────────────────
+// ─── Serper Search ───────────────────────────────────────
 async function googleSearch(query, startIndex = 1){
-  const url = new URL('https://www.googleapis.com/customsearch/v1');
-  url.searchParams.set('key', GOOGLE_API_KEY);
-  url.searchParams.set('cx',  GOOGLE_CX);
-  url.searchParams.set('q',   query);
-  url.searchParams.set('start', startIndex);
-  url.searchParams.set('num', 10);
-
-  const res = await fetch(url);
+  const page = Math.ceil(startIndex / 10);
+  const res = await fetch('https://google.serper.dev/search', {
+    method: 'POST',
+    headers: {
+      'X-API-KEY': SERPER_API_KEY,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ q: query, page, num: 10 })
+  });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  const data = await res.json();
+
+  // Normaliza la respuesta al formato que espera renderSearchResults
+  const items = (data.organic || []).map(r => ({
+    title:       r.title,
+    link:        r.link,
+    displayLink: r.displayLink || new URL(r.link).hostname,
+    snippet:     r.snippet,
+    pagemap:     r.imageUrl ? { cse_thumbnail: [{ src: r.imageUrl }] } : undefined
+  }));
+  return {
+    items,
+    searchInformation: {
+      totalResults:          String((data.searchInformation?.totalResults) || items.length),
+      formattedTotalResults: data.searchInformation?.totalResults ? String(data.searchInformation.totalResults) : String(items.length),
+      formattedSearchTime:   data.searchInformation?.timeTaken ? String(data.searchInformation.timeTaken) : '0.5'
+    }
+  };
 }
 
 function renderSearchResults(data, query, startIndex){
